@@ -20,6 +20,7 @@
 
 #import "IKLoginViewController.h"
 #import "InstagramKit.h"
+#import <RealTimesSDK/RealTimesSDK.h>
 
 @interface IKLoginViewController () <UIWebViewDelegate>
 
@@ -31,6 +32,7 @@
 
 - (void)viewDidLoad
 {
+    RTCurationInfo* dummy = [[RTCurationInfo alloc] initWithScore:0.0 sceneEvents:[NSArray array] nonPersonalFlag:NO version:@"dummy"];
     [super viewDidLoad];
     self.webView.scrollView.bounces = NO;
     [self.navigationItem.rightBarButtonItem setEnabled:NO];
