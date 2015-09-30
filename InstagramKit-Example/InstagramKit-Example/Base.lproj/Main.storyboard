@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="lv9-3E-qvv">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="lv9-3E-qvv">
     <dependencies>
         <development version="5100" identifier="xcode"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
@@ -60,7 +60,18 @@
                                 <action selector="loginTapped:" destination="4al-wR-gxx" id="6xZ-Bf-YC3"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="More" id="3Nd-Tj-wLc">
+                        <textField key="titleView" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="cat" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" id="yxc-SQ-z0g">
+                            <rect key="frame" x="96" y="7" width="128" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <textInputTraits key="textInputTraits"/>
+                            <connections>
+                                <action selector="editingChanged:" destination="4al-wR-gxx" eventType="editingChanged" id="WSp-6n-b4K"/>
+                                <action selector="editingDidBegin:" destination="4al-wR-gxx" eventType="editingDidBegin" id="WXw-HL-oRp"/>
+                                <action selector="editingDidEnd:" destination="4al-wR-gxx" eventType="editingDidEnd" id="okG-jm-eNK"/>
+                            </connections>
+                        </textField>
+                        <barButtonItem key="rightBarButtonItem" title="Play" id="3Nd-Tj-wLc">
                             <connections>
                                 <action selector="moreTapped:" destination="4al-wR-gxx" id="8MH-dz-aIL"/>
                             </connections>
@@ -69,7 +80,7 @@
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="p2i-vK-IcB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="422" y="104"/>
+            <point key="canvasLocation" x="456" y="104"/>
         </scene>
         <!--Media View Controller-->
         <scene sceneID="i2X-FZ-KL9">
@@ -95,7 +106,7 @@
                                     <constraint firstAttribute="height" constant="70" id="PBf-ts-yLW"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>

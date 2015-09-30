@@ -32,7 +32,7 @@
 
 - (void)viewDidLoad
 {
-    RTCurationInfo* dummy = [[RTCurationInfo alloc] initWithScore:0.0 sceneEvents:[NSArray array] nonPersonalFlag:NO version:@"dummy"];
+//    RTCurationInfo* dummy = [[RTCurationInfo alloc] initWithScore:0.0 sceneEvents:[NSArray array] nonPersonalFlag:NO version:@"dummy"];
     [super viewDidLoad];
     self.webView.scrollView.bounces = NO;
     [self.navigationItem.rightBarButtonItem setEnabled:NO];

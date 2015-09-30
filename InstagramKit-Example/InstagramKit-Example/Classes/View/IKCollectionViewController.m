@@ -26,10 +26,13 @@
 #import "IKMediaViewController.h"
 #import "IKLoginViewController.h"
 
+#import <RealTimesSDK/RealTimesSDK.h>
+
+
 #define kNumberOfCellsInARow 3
 #define kFetchItemsCount 15
 
-@interface IKCollectionViewController ()
+@interface IKCollectionViewController () <RTPlaybackCompletionHandling>
 
 @property (nonatomic, strong)   NSMutableArray *mediaArray;
 @property (nonatomic, strong)   InstagramPaginationInfo *currentPaginationInfo;
@@ -39,6 +42,8 @@
 
 
 @implementation IKCollectionViewController
+
+static NSString* API_KEY = @"72829cb16d5c895499ab4fce4eebb93db0938514420a6fc9197e554a";
 
 
 - (void)viewDidLoad
@@ -69,7 +74,7 @@
     BOOL isSessionValid = [self.instagramEngine isSessionValid];
     [self setTitle: (isSessionValid) ? @"My Feed" : @"Popular Media"];
     [self.navigationItem.leftBarButtonItem setTitle: (isSessionValid) ? @"Log out" : @"Log in"];
-    [self.navigationItem.rightBarButtonItem setEnabled: isSessionValid];
+//    [self.navigationItem.rightBarButtonItem setEnabled: isSessionValid];
     [self.mediaArray removeAllObjects];
     [self.collectionView reloadData];
     
@@ -125,15 +130,109 @@
                                        }];
 }
 
+- (void)requestSearchFeed: (NSString*) text
+{
+    [self.navigationItem.rightBarButtonItem setEnabled: NO];
+    
+    [self.instagramEngine getMediaWithTagName:text count:kFetchItemsCount maxId:nil
+                                  //withSuccess:<#^(NSArray *media, InstagramPaginationInfo *paginationInfo)success#> failure:<#^(NSError *error, NSInteger serverStatusCode)failure#>]
+//    [self.instagramEngine getSelfFeedWithCount:kFetchItemsCount
+//                                         maxId:self.currentPaginationInfo.nextMaxId
+                                       withSuccess:^(NSArray *media, InstagramPaginationInfo *paginationInfo) {
+                                           
+                                           self.currentPaginationInfo = paginationInfo;
+                                           
+                                           [self.mediaArray removeAllObjects];
+                                           [self.mediaArray addObjectsFromArray:media];
+                                           [self.collectionView reloadData];
+                                           
+                                           [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.mediaArray.count - 1 inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredVertically animated:YES];
+                                           [self.navigationItem.rightBarButtonItem setEnabled: YES];
+                                           [self.navigationItem.rightBarButtonItem setTitle:@"Play"];
+                                           
+                                       }
+                                       failure:^(NSError *error, NSInteger statusCode) {
+                                           NSLog(@"Request Self Feed Failed %@", error);
+                                           [self.navigationItem.rightBarButtonItem setTitle:@"Error"];
+                                       }];
+}
 
 /**
     Invoked when user taps the 'More' navigation item.
     @discussion The requestSelfFeed method is called with updated pagination parameters (nextMaxId).
  */
 - (IBAction)moreTapped:(id)sender {
-    [self requestSelfFeed];
+    NSDate* creationDate = [NSDate date];
+    creationDate = [creationDate dateByAddingTimeInterval:-(24*60*60)];
+    int timeDelta = 1;
+
+    NSMutableArray* items = [NSMutableArray array];
+    
+    for (InstagramMedia *media in self.mediaArray) {
+        NSLog(@"%@", media.standardResolutionImageURL);
+        
+        NSString* urlString = media.lowResolutionImageURL.description;
+        
+        RTMediaItem* item = [[RTMediaItem alloc] initWithType:RTMediaTypePhoto
+                                                   identifier:urlString];
+        
+        NSURL* url = media.lowResolutionImageURL;
+        
+        item.assetURL = url;
+        item.thumbnailURL = media.thumbnailURL;
+        
+        item.creationDate = [creationDate dateByAddingTimeInterval:(5*60*timeDelta++)];
+//        if (item.mediaType != RTMediaTypeVideo)
+//        {
+//            item.thumbnailURL = url;
+//        }
+
+        [items addObject:item];
+    }
+    
+    RTStory* story = [[RTStory alloc] initWithType:RTStoryTypeHomeEvent
+                                        mediaItems:items
+                                             title:@"My remote story" titleIsDateBased:NO];
+    
+    RTStoryPlayer* player = [[RTStoryPlayer alloc] initWithAPIKey:API_KEY];
+    
+    // Create playback options
+    NSMutableDictionary *options = [NSMutableDictionary dictionary];
+    
+    // This is how you would pass an authentication token to the player.
+    NSData *myAuthToken = [[NSData alloc] init];	// replace with the real auth token
+    [options setObject:myAuthToken forKey:RTOptionAuthenticationToken];
+    
+    //adding apps URL scheme so that we can return to the app after the story play is finished
+    [options setObject:@"instareal://" forKey:RTOptionHostAppURLScheme];
+    
+    // allow auto install if player is not installed
+    [options setObject:@YES forKey:RTOptionAllowAutoInstall];
+    [options setObject:@"#2321233" forKey:RTOptionSubscriberId];
+    
+    NSError *error = nil;
+    if ([player playWithStory:story options:options handler: self error:&error]) {
+        NSLog(@"%@",[error description],nil);
+    }
+
+//    [self requestSelfFeed];
+}
+- (IBAction)editingChanged:(UITextField *)sender {
+    NSLog(@"editingChanged %@", sender.text);
+    [self requestSearchFeed:sender.text];
 }
 
+- (IBAction)valueChanged:(UITextField *)sender {
+    NSLog(@"valueChanged %@", sender.text);
+}
+
+- (IBAction)editingDidBegin:(UITextField *)sender {
+    NSLog(@"editingDidBegin %@", sender.text);
+}
+
+- (IBAction)editingDidEnd:(UITextField *)sender {
+    NSLog(@"editingDidEnd %@", sender.text);
+}
 
 /**
     Invoked when user taps the left navigation item.
@@ -205,6 +304,28 @@
     UICollectionViewFlowLayout *layout = (UICollectionViewFlowLayout *)self.collectionView.collectionViewLayout;
     CGFloat size = floor((CGRectGetWidth(self.collectionView.bounds)-1) / kNumberOfCellsInARow);
     layout.itemSize = CGSizeMake(size, size);
+}
+
+#pragma mark - RTPlaybackCompletionHandling members
+
+- (void)storyPlayer:(RTStoryPlayer *)sender didFinishPlayback:(RTStory *)story storyModified:(BOOL)isStoryModified response:(RTStoryPlayerResponse *)response error:(NSError *)error
+{
+    // Check if there was an error and do nothing in that case.
+    if(error != nil) {
+        
+        NSLog(@"Playback response error: %@", error);
+        
+        return;
+    }
+    
+    /*
+     * The user returned from the RealTimes app to our application.
+     * We check whether the user saved some stories.
+     */
+    NSArray *savedStories = response.savedStories;
+    if (savedStories.count != 0) {
+        // Persist saved stories or do something with them.
+    }
 }
 
 @end
