@@ -171,15 +171,17 @@ static NSString* API_KEY = @"72829cb16d5c895499ab4fce4eebb93db0938514420a6fc9197
     for (InstagramMedia *media in self.mediaArray) {
         NSLog(@"%@", media.standardResolutionImageURL);
         
-        NSString* urlString = media.lowResolutionImageURL.description;
+        NSString* urlString = media.standardResolutionImageURL.description;
         
         RTMediaItem* item = [[RTMediaItem alloc] initWithType:RTMediaTypePhoto
                                                    identifier:urlString];
         
-        NSURL* url = media.lowResolutionImageURL;
+        NSURL* url = media.standardResolutionImageURL;
         
         item.assetURL = url;
-        item.thumbnailURL = media.thumbnailURL;
+        // workaround BUG where thumbnail is been use to generate story
+        item.thumbnailURL = media.standardResolutionImageURL;
+//        item.thumbnailURL = media.thumbnailURL;
         
         item.creationDate = [creationDate dateByAddingTimeInterval:(5*60*timeDelta++)];
 //        if (item.mediaType != RTMediaTypeVideo)
