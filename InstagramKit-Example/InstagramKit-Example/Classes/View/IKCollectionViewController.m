@@ -37,13 +37,14 @@
 @property (nonatomic, strong)   NSMutableArray *mediaArray;
 @property (nonatomic, strong)   InstagramPaginationInfo *currentPaginationInfo;
 @property (nonatomic, weak)     InstagramEngine *instagramEngine;
+@property (weak, nonatomic) IBOutlet UITextField *input;
 
 @end
 
 
 @implementation IKCollectionViewController
 
-static NSString* API_KEY = @"72829cb16d5c895499ab4fce4eebb93db0938514420a6fc9197e554a";
+static NSString* API_KEY = @"3a25374f57c6aaf425908ee6a27949579c370e518f3045413a098cd9";
 
 
 - (void)viewDidLoad
@@ -61,6 +62,10 @@ static NSString* API_KEY = @"72829cb16d5c895499ab4fce4eebb93db0938514420a6fc9197
                                                object:nil];
 }
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [self.input resignFirstResponder];
+}
 
 /**
  *  Depending on whether the Instagram session is authenticated,
@@ -162,6 +167,8 @@ static NSString* API_KEY = @"72829cb16d5c895499ab4fce4eebb93db0938514420a6fc9197
     @discussion The requestSelfFeed method is called with updated pagination parameters (nextMaxId).
  */
 - (IBAction)moreTapped:(id)sender {
+    [self.input resignFirstResponder];
+    
     NSDate* creationDate = [NSDate date];
     creationDate = [creationDate dateByAddingTimeInterval:-(24*60*60)];
     int timeDelta = 1;
@@ -180,8 +187,8 @@ static NSString* API_KEY = @"72829cb16d5c895499ab4fce4eebb93db0938514420a6fc9197
         
         item.assetURL = url;
         // workaround BUG where thumbnail is been use to generate story
-        item.thumbnailURL = media.standardResolutionImageURL;
-//        item.thumbnailURL = media.thumbnailURL;
+//        item.thumbnailURL = media.standardResolutionImageURL;
+        item.thumbnailURL = media.thumbnailURL;
         
         item.creationDate = [creationDate dateByAddingTimeInterval:(5*60*timeDelta++)];
 //        if (item.mediaType != RTMediaTypeVideo)
@@ -221,7 +228,10 @@ static NSString* API_KEY = @"72829cb16d5c895499ab4fce4eebb93db0938514420a6fc9197
 }
 - (IBAction)editingChanged:(UITextField *)sender {
     NSLog(@"editingChanged %@", sender.text);
-    [self requestSearchFeed:sender.text];
+    
+    if (sender.text.length > 0) {
+        [self requestSearchFeed:sender.text];
+    }
 }
 
 - (IBAction)valueChanged:(UITextField *)sender {

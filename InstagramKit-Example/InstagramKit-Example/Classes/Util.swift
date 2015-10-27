@@ -8,6 +8,16 @@
 
 import UIKit
 
-class Util: NSObject {
-   
+@objc
+
+public class Util:  NSObject {
+    private override init() {
+        
+    }
+    
+    public static func play() -> Int {
+        print("swifting")
+        
+        return 1
+    }
 }

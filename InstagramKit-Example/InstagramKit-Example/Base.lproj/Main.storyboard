@@ -60,11 +60,11 @@
                                 <action selector="loginTapped:" destination="4al-wR-gxx" id="6xZ-Bf-YC3"/>
                             </connections>
                         </barButtonItem>
-                        <textField key="titleView" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="cat" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" id="yxc-SQ-z0g">
+                        <textField key="titleView" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="cat" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" id="yxc-SQ-z0g">
                             <rect key="frame" x="96" y="7" width="128" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                            <textInputTraits key="textInputTraits"/>
+                            <textInputTraits key="textInputTraits" enablesReturnKeyAutomatically="YES"/>
                             <connections>
                                 <action selector="editingChanged:" destination="4al-wR-gxx" eventType="editingChanged" id="WSp-6n-b4K"/>
                                 <action selector="editingDidBegin:" destination="4al-wR-gxx" eventType="editingDidBegin" id="WXw-HL-oRp"/>
@@ -77,6 +77,9 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="input" destination="yxc-SQ-z0g" id="kmV-4y-72a"/>
+                    </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="p2i-vK-IcB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

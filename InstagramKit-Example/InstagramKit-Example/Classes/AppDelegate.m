@@ -21,7 +21,7 @@
 
 #import "AppDelegate.h"
 
-//#import "InstagramKit-Swift.h"
+#import "InstagramKit_Example-Swift.h"
 
 @interface AppDelegate ()
 
@@ -33,6 +33,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
 //    [Util test];
+//    int a = [Util play];
     
     return YES;
 }
