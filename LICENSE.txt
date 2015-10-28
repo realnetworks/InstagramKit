@@ -1,3 +1,6 @@
+This SDK contains InstagramKit wrapper which can be downloaded at 
+https://github.com/shyambhat/InstagramKit. The licensing and copyright information 
+relating to InstagramKit wrapper are as follows:
 
 The MIT License (MIT)
 
